@@ -1,0 +1,551 @@
+<html>
+
+<head>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('pages/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            /* Keeps the background fixed while scrolling */
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot for College Admissions</title>
+    <style>
+        /* General reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 400;
+            font-size: 100%;
+
+        }
+
+        *,
+        html {
+            --primaryGradient: linear-gradient(93.12deg, #EECD94 0.52%, #EECD94 100%);
+            --secondaryGradient: linear-gradient(268.91deg, #EECD94 -2.14%, #EECD94 99.69%);
+            --primaryBoxShadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+            --secondaryBoxShadow: 0px -10px 15px rgba(0, 0, 0, 0.1);
+            --primary: #EECD94;
+        }
+
+        /* Chatbox styles */
+        .chatbox {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            width: 40%;
+            max-width: 500px;
+            height: 600px;
+            /* Shortened height */
+            z-index: 1000;
+        }
+
+        .chatbox__support {
+            display: none;
+            /* Initially hidden */
+            flex-direction: column;
+            background: #EECD94;
+            width: 100%;
+            height: 100%;
+            transition: all 0.3s ease-in-out;
+            border-radius: 20px;
+            box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .chatbox__container {
+            display: flex;
+            flex-direction: column;
+            align-items: left;
+            width: 100%;
+        }
+
+        #input {
+            width: 80%;
+            /* Adjust as needed */
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .chatbox--active .chatbox__support {
+            display: flex;
+        }
+
+        .chatbox__button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chatbox__button img {
+            width: 500px;
+            height: 10px;
+            border-radius: 60%;
+            width: 100%;
+            height: 55;
+            box-shadow: var(--primaryBoxShadow);
+        }
+
+        .send__button {
+            padding: 6px;
+            background-color: black;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .chatbox__header {
+            position: sticky;
+            top: 0;
+            background: var(--primaryGradient);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 20px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: var(--primaryBoxShadow);
+        }
+
+        .chatbox__image--header {
+            margin-right: 10px;
+        }
+
+        .chatbox__heading--header {
+            font-size: 1.2rem;
+            color: rgb(220, 121, 34);
+        }
+
+        .chatbox__description--header {
+            font-size: .9rem;
+            color: rgb(220, 121, 34);
+        }
+
+        .chatbox__messages {
+            padding: 0 20px;
+            margin-top: auto;
+            display: flex;
+            overflow-y: scroll;
+            flex-direction: column;
+            background-image: url('SIH-backend/templates/hi.jpeg');
+            background-size: contain;
+            /* Changed from 'cover' to 'contain' */
+            background-position: center;
+            /* Added this property */
+            height: 90%;
+
+        }
+
+        .messages__item {
+            margin-top: 10px;
+            padding: 8px 12px;
+            max-width: 70%;
+            border-radius: 10px;
+        }
+
+        .messages__item--visitor {
+            background: #c94a4a;
+            /* Visitor (user) message color */
+            align-self: flex-start;
+            color: #333;
+        }
+
+        .messages__item--operator {
+            background: var(--primary);
+            /* Operator (bot) message color */
+            color: rgb(220, 121, 34);
+            margin-left: auto;
+            align-self: flex-end;
+        }
+
+        .chatbox__footer {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: var(--secondaryGradient);
+            box-shadow: var(--secondaryBoxShadow);
+            border-bottom-right-radius: 10px;
+            border-bottom-left-radius: 10px;
+            height: 15%;
+        }
+
+        .chatbox__footer input {
+            width: 80%;
+            border: none;
+            padding: 10px 10px;
+            border-radius: 30px;
+            text-align: left;
+        }
+
+        .chatbox__send--footer {
+            background-color: #1fbe8e;
+            border: none;
+            border-radius: 50%;
+            padding: 30px;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+
+        .chatbox__send--footer img {
+            width: 24px;
+            /* Adjust icon size as needed */
+            height: 24px;
+        }
+
+        .chatbox__button img {
+            padding: 10px;
+            background: rgb(208, 66, 66);
+            border: none;
+            border-top-left-radius: 70px;
+            border-top-right-radius: 50px;
+            border-bottom-left-radius: 50px;
+            box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: block;
+            /* Ensure the image is displayed as a block element */
+        }
+
+        /* Style for voice button */
+        #voice {
+            background-color: #1fbe8e;
+            border: none;
+            border-radius: 50%;
+            padding: 90px;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        #voice img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .college-card {
+            background-color: #f7f7f7; /* Light background for the card */
+            border-radius: 8px; /* Rounded corners */
+            overflow: hidden; /* Ensure the image fits within the card */
+            position: relative; /* For absolute positioning of the overlay */
+            text-align: center; /* Center text in the card */
+        }
+
+        .college-card img {
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            object-fit: cover; /* Maintain aspect ratio */
+        }
+
+        .college-card .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4); /* Semi-transparent overlay */
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .college-card:hover .overlay {
+            opacity: 1; /* Show overlay on hover */
+        }
+
+        .overlay span {
+            font-size: 1.25rem; /* Adjust font size */
+            font-weight: bold;
+        }
+    </style>
+    <!-- Include Axios CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Include marked.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+
+<body class="bg-gray-100" class="flex flex-col items-center justify-center min-h-screen" class="bg-white" class="p-8">
+    <div class="chatbox">
+        <div class="chatbox__support">
+            <div class="chatbox__header">
+                <div class="chatbox__image--header">
+                    <img src="SIH-backend/templates/Screenshot_2024-09-09_at_5.13.17_AM-removebg-preview.png"
+                        alt="Support Avatar" style="width: 70px; height: 50px; object-fit: scale-down;">
+                </div>
+                <div class="chatbox__content--header">
+                    <h5 class="chatbox__heading--header"><b>AdmiBot Mithi</b></h5>
+                    <p class="chatbox__description--header"> How can I help you today?</p>
+                </div>
+            </div>
+            <div id="messages" class="chatbox__messages"></div>
+            <div class="chatbox__container">
+                <input type="text" id="input" placeholder="Ask Your Doubts ....">
+                <div class="chatbox__buttons">
+                    <button type="button" class="chatbox__send--footer" id="voice">
+                        <img src="https://img.icons8.com/ios-filled/24/ffffff/microphone.png" alt="Voice Input">
+                    </button>
+                    <button type="button" class="chatbox__send--footer" id="send">
+                        <img src="https://img.icons8.com/ios-filled/24/ffffff/right.png" alt="Send">
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="chatbox__button">
+            <img src="SIH-backend/templates/hi.jpeg
+SIH-backend/templates/index.html
+SIH-backend/templates/Screenshot_2024-09-09_at_5.13.17_AM-removebg-preview.png
+" />
+        </div>
+    </div>
+
+    <script>
+        // Toggle chatbox visibility
+        document.querySelector('.chatbox__button').onclick = function () {
+            const chatbox = document.querySelector('.chatbox');
+            chatbox.classList.toggle('chatbox--active');
+        };
+
+        // Speech recognition setup
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        // Voice button click handler
+        document.getElementById('voice').onclick = function () {
+            recognition.start();
+        };
+
+        // Handle speech recognition result
+        recognition.onresult = function (event) {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('input').value = transcript; // Set the input field with the recognized text
+            document.getElementById('send').click(); // Automatically send the message after voice input
+        };
+
+        // Handle send button click
+        document.getElementById('send').onclick = function () {
+            const input = document.getElementById('input').value;
+            if (input.trim() === '') return;
+
+            const messages = document.getElementById('messages');
+
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.textContent = 'You: ' + input;
+            userMessage.classList.add('messages__item', 'messages__item--visitor');
+            messages.appendChild(userMessage);
+
+            // Scroll to the bottom of messages
+            messages.scrollTop = messages.scrollHeight;
+
+            // Use Axios to make a POST request
+            axios.post('/chat', {
+                question: input
+            })
+                .then(response => {
+                    const botMessage = document.createElement('div');
+                    // Convert Markdown to HTML using marked
+                    botMessage.innerHTML = marked.parse(response.data.answer);
+                    botMessage.classList.add('messages__item', 'messages__item--operator');
+                    messages.appendChild(botMessage);
+
+                    // Scroll to the bottom after bot reply
+                    messages.scrollTop = messages.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('There was an error!', error);
+                    const errorMessage = document.createElement('div');
+                    errorMessage.textContent = 'Error: Unable to get a response.';
+                    errorMessage.classList.add('messages__item');
+                    messages.appendChild(errorMessage);
+                });
+
+            document.getElementById('input').value = '';
+        };
+
+        // Handle Enter key press to send message
+        document.getElementById('input').addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent the default form submission if applicable
+                document.getElementById('send').click(); // Trigger the send button click
+            }
+        });
+    </script>
+
+    <header class="flex justify-between items-center p-4 bg-white shadow-md">
+        <div class="flex items-center">
+            <button class="text-2xl">
+                <i class="fas fa-bars">
+                </i>
+            </button>
+
+        </div>
+        <div class="flex space-x-4">
+            <button class="bg-yellow-200 px-4 py-2 rounded">
+                LOGIN
+            </button>
+            <button class="bg-yellow-200 px-4 py-2 rounded">
+                SIGN UP
+            </button>
+        </div>
+    </header>
+    <main class="flex flex-col items-start mt-8 ml-8">
+        <div class="text-left space-y-4">
+            <h1 class="text-4xl font-bold">
+                dvwsdewedfrewdcv
+            </h1>
+            <h2 class="text-4xl font-bold">
+                efgbewdcvf
+            </h2>
+            <h3 class="text-4xl font-bold">
+                wefgedv
+            </h3>
+            <h4 class="text-4xl font-bold">
+                erfewdf
+            </h4>
+        </div>
+        <div class="relative mr-[-10%] w-50 mt-8">
+            <img alt="Illustration of a building with multiple arches and windows" src="pages/image-removebg.png"
+                class="w-full h-auto shadow-2xl opacity-95 rounded-lg" />
+        </div>
+        </br>
+        </br>
+        </br>
+        </br>
+
+        <div class="w-full max-w-6xl mx-auto p-4">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-6xl font-bold">List of Colleges</h1>
+                <div class="relative">
+                    <input type="text" class="border-2 border-black rounded-full pl-4 pr-10 py-2" placeholder="Search...">
+                    <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2"></i>
+                </div>
+            </div>
+            <div class="grid grid-cols-4 gap-4 mb-8">
+                <!-- College Cards -->
+                <div class="bg-yellow-200 h-64"></div>
+                <div class="bg-yellow-200 h-64"></div>
+                <div class="bg-yellow-200 h-64"></div>
+                <div class="bg-yellow-200 h-64"></div>
+                <div class="bg-yellow-200 h-64"></div>
+                <div class="bg-yellow-200 h-64"></div>
+                <div class="bg-yellow-200 h-64"></div>
+                <div class="bg-yellow-200 h-64 flex items-center justify-center">
+                    <span class="text-xl font-bold">Know<br>More</span>
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+            </div>
+            <div class="flex justify-center space-x-2">
+                <div class="w-4 h-4 bg-black rounded-full"></div>
+                <div class="w-4 h-4 bg-black rounded-full"></div>
+                <div class="w-4 h-4 bg-black rounded-full"></div>
+                <div class="w-4 h-4 bg-black rounded-full"></div>
+                <div class="w-4 h-4 bg-black rounded-full"></div>
+                <div class="w-4 h-4 bg-black rounded-full"></div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="w-full max-w-4xl mx-auto p-8">
+            <h1 class="text-5xl font-bold mb-8">FAQs</h1>
+            <div class="space-y-4">
+                <div class="bg-yellow-200 p-4">
+                    <p class="font-bold">What is your return policy?</p>
+                    <p class="mt-2">You can return any item within 30 days of purchase.</p>
+                </div>
+                <div class="bg-yellow-200 p-4">
+                    <p class="font-bold">How do I track my order?</p>
+                    <p class="mt-2">You can track your order using the tracking number provided in your confirmation email.</p>
+                </div>
+                <div class="bg-yellow-200 p-4">
+                    <p class="font-bold">Do you ship internationally?</p>
+                    <p class="mt-2">Yes, we ship to most countries worldwide.</p>
+                </div>
+                <div class="bg-yellow-200 p-4">
+                    <p class="font-bold">What payment methods do you accept?</p>
+                    <p class="mt-2">We accept Visa, MasterCard, American Express, and PayPal.</p>
+                </div>
+                <div class="bg-yellow-200 p-4">
+                    <p class="font-bold">How can I contact customer service?</p>
+                    <p class="mt-2">You can contact us via email at support@example.com or call us at 123-456-7890.</p>
+                </div>
+                <div class="bg-yellow-200 p-4">
+                    <p class="font-bold">Can I change or cancel my order?</p>
+                    <p class="mt-2">You can change or cancel your order within 24 hours of placing it.</p>
+                </div>
+                <div class="bg-yellow-200 p-4">
+                    <p class="font-bold">What is your privacy policy?</p>
+                    <p class="mt-2">We are committed to protecting your privacy. Please read our privacy policy for more details.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Us, Quick Links, and Location Map Sections -->
+        <div class="w-full max-w-6xl mx-auto grid grid-cols-3 gap-8 p-8">
+            <!-- Contact Us Section -->
+            <div>
+                <h2 class="text-gray-800 text-2xl font-bold mb-4">Contact Us</h2>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-bold">Random Company</h3>
+                    <p>1234 Random Street, P/O - Random Area,<br>Random City, Random State - 123456</p>
+                    <p class="font-bold">E-Mail: randomemail@example.com</p>
+                    <div class="mt-4">
+                        <p class="font-bold">Like Us on:</p>
+                        <div class="flex space-x-4 mt-2">
+                            <a href="#" class="text-blue-600"><i class="fab fa-facebook fa-2x"></i></a>
+                            <a href="#" class="text-pink-600"><i class="fab fa-instagram fa-2x"></i></a>
+                            <a href="#" class="text-red-600"><i class="fab fa-youtube fa-2x"></i></a>
+                            <a href="#" class="text-black"><i class="fab fa-x-twitter fa-2x"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quick Links Section -->
+            <div>
+                <h2 class="text-gray-800 text-2xl font-bold mb-4">Quick Links</h2>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <ul class="space-y-2">
+                        <li><a href="#" class="block text-lg font-bold text-green-600">Query</a></li>
+                        <li><a href="#" class="block text-lg font-bold text-green-600">FAQ</a></li>
+                        <li><a href="#" class="block text-lg font-bold text-green-600">Home</a></li>
+                        <li><a href="#" class="block text-lg font-bold text-green-600">Doubts</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Location Map Section -->
+            <div>
+                <h2 class="text-gray-800 text-2xl font-bold mb-4">Location Map</h2>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3672.019123456789!2d85.82453931505678!3d20.2960589853871!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a1909f1f1f1f1f1%3A0x2f2f2f2f2f2f2f!2sDAV%20Public%20School!5e0!3m2!1sen!2sin!4v1616161616161!5m2!1sen!2sin" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </main>
+</body
+</html>
